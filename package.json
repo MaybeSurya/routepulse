@@ -1,0 +1,33 @@
+{
+  "name": "route-pulse",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "check-types": "turbo check-types",
+    "dev:native": "turbo -F native dev",
+    "dev:web": "turbo -F web dev",
+    "dev:server": "turbo -F server dev",
+    "db:push": "turbo -F @route-pulse/db db:push",
+    "db:studio": "turbo -F @route-pulse/db db:studio",
+    "db:generate": "turbo -F @route-pulse/db db:generate",
+    "db:migrate": "turbo -F @route-pulse/db db:migrate"
+  },
+  "dependencies": {
+    "@route-pulse/env": "*",
+    "dotenv": "^17.2.2",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@route-pulse/config": "*",
+    "@types/node": "^22.13.14",
+    "turbo": "^2.6.3",
+    "typescript": "^5"
+  },
+  "packageManager": "npm@11.7.0"
+}

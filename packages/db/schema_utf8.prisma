@@ -1,0 +1,270 @@
+﻿[dotenv@17.3.1] injecting env (33) from ..\..\apps\server\.env -- tip: ≡ƒñû agentic secret storage: https://dotenvx.com/as2
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated"
+  moduleFormat = "esm"
+  runtime      = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model announcements {
+  id           String   @id
+  title        String
+  body         String
+  audienceRole Role?
+  authorId     String
+  isPublished  Boolean  @default(true)
+  fileKey      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime
+  users        users    @relation(fields: [authorId], references: [id])
+
+  @@index([audienceRole])
+  @@index([isPublished])
+}
+
+model bookings {
+  id        String        @id
+  studentId String
+  busId     String
+  seatId    String
+  routeId   String?
+  status    BookingStatus @default(pending)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime
+  buses     buses         @relation(fields: [busId], references: [id])
+  routes    routes?       @relation(fields: [routeId], references: [id])
+  seats     seats         @relation(fields: [seatId], references: [id])
+  students  students      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([busId])
+  @@index([status])
+  @@index([studentId])
+}
+
+model bus_locations {
+  id        String   @id
+  busId     String
+  lat       Float
+  lng       Float
+  speed     Float    @default(0)
+  heading   Float?
+  timestamp DateTime @default(now())
+  buses     buses    @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  @@index([busId, timestamp(sort: Desc)])
+}
+
+model buses {
+  id                            String          @id
+  plateNumber                   String          @unique
+  capacity                      Int             @default(40)
+  routeId                       String?
+  driverId                      String?
+  status                        BusStatus       @default(inactive)
+  model                         String?
+  createdAt                     DateTime        @default(now())
+  updatedAt                     DateTime
+  lastStopId                    String?
+  nextStopId                    String?
+  heading                       Float?
+  lat                           Float?
+  lng                           Float?
+  speed                         Float?          @default(0)
+  bookings                      bookings[]
+  bus_locations                 bus_locations[]
+  drivers                       drivers?        @relation(fields: [driverId], references: [id])
+  stops_buses_lastStopIdTostops stops?          @relation("buses_lastStopIdTostops", fields: [lastStopId], references: [id])
+  stops_buses_nextStopIdTostops stops?          @relation("buses_nextStopIdTostops", fields: [nextStopId], references: [id])
+  routes                        routes?         @relation(fields: [routeId], references: [id])
+  seats                         seats[]
+
+  @@index([driverId])
+  @@index([lastStopId])
+  @@index([nextStopId])
+  @@index([routeId])
+  @@index([status])
+}
+
+model complaints {
+  id          String          @id
+  userId      String
+  subject     String
+  description String
+  fileKey     String?
+  status      ComplaintStatus @default(open)
+  adminNotes  String?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime
+  users       users           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([userId])
+}
+
+model drivers {
+  id            String   @id
+  userId        String   @unique
+  driverId      String   @unique
+  licenseNumber String
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+  buses         buses[]
+  users         users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([driverId])
+}
+
+model password_reset_tokens {
+  id        String   @id
+  email     String
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+model routes {
+  id          String     @id
+  name        String
+  description String?
+  isActive    Boolean    @default(true)
+  color       String     @default("#6366F1")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime
+  bookings    bookings[]
+  buses       buses[]
+  stops       stops[]
+
+  @@index([isActive])
+}
+
+model seats {
+  id         String     @id
+  busId      String
+  seatNumber String
+  status     SeatStatus @default(available)
+  bookedBy   String?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime
+  bookings   bookings[]
+  buses      buses      @relation(fields: [busId], references: [id], onDelete: Cascade)
+
+  @@unique([busId, seatNumber])
+  @@index([busId, status])
+}
+
+model stops {
+  id                            String   @id
+  routeId                       String
+  name                          String
+  lat                           Float
+  lng                           Float
+  order                         Int
+  radiusMeters                  Float    @default(50)
+  createdAt                     DateTime @default(now())
+  detectionCount                Int      @default(0)
+  landmark                      String?
+  buses_buses_lastStopIdTostops buses[]  @relation("buses_lastStopIdTostops")
+  buses_buses_nextStopIdTostops buses[]  @relation("buses_nextStopIdTostops")
+  routes                        routes   @relation(fields: [routeId], references: [id], onDelete: Cascade)
+
+  @@index([routeId, order])
+}
+
+model students {
+  id             String     @id
+  userId         String     @unique
+  universityId   String
+  enrollmentYear Int
+  departmentName String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime
+  bookings       bookings[]
+  users          users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model system_logs {
+  id        String   @id
+  type      LogLevel @default(INFO)
+  event     String
+  message   String?
+  metadata  Json?
+  userId    String?
+  busId     String?
+  createdAt DateTime @default(now())
+
+  @@index([busId])
+  @@index([createdAt(sort: Desc)])
+  @@index([type])
+}
+
+model users {
+  id            String          @id
+  email         String          @unique
+  phone         String?         @unique
+  erpId         String?         @unique
+  role          Role            @default(student)
+  passwordHash  String
+  isVerified    Boolean         @default(false)
+  refreshToken  String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  announcements announcements[]
+  complaints    complaints[]
+  drivers       drivers?
+  students      students?
+
+  @@index([email])
+  @@index([erpId])
+  @@index([phone])
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  cancelled
+  completed
+}
+
+enum BusStatus {
+  inactive
+  en_route
+  arrived
+  maintenance
+}
+
+enum ComplaintStatus {
+  open
+  in_review
+  resolved
+  closed
+}
+
+enum LogLevel {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+enum Role {
+  student
+  driver
+  transport_admin
+  super_admin
+}
+
+enum SeatStatus {
+  available
+  held
+  booked
+}
+
+

@@ -1,0 +1,3 @@
+{
+  "extends": "@route-pulse/config/tsconfig.base.json"
+}

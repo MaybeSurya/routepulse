@@ -1,0 +1,8 @@
+src/services/auth.service.ts(113,43): error TS2322: Type '({ id: string; createdAt: Date; updatedAt: Date; title: string; body: string; audienceRole: Role | null; authorId: string; isPublished: boolean; fileKey: string | null; } | { ...; })[] | ({ ...; } | { ...; })[] | { ...; }[] | { ...; }[] | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/auth.service.ts(113,57): error TS2322: Type '({ id: string; createdAt: Date; updatedAt: Date; title: string; body: string; audienceRole: Role | null; authorId: string; isPublished: boolean; fileKey: string | null; } | { ...; })[] | ({ ...; } | { ...; })[] | { ...; }[] | { ...; }[] | undefined' is not assignable to type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/auth.service.ts(114,46): error TS2345: Argument of type '({ id: string; createdAt: Date; updatedAt: Date; title: string; body: string; audienceRole: Role | null; authorId: string; isPublished: boolean; fileKey: string | null; } | { ...; })[] | ({ ...; } | { ...; })[] | { ...; }[] | { ...; }[] | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+src/services/auth.service.ts(115,45): error TS2345: Argument of type '({ id: string; createdAt: Date; updatedAt: Date; title: string; body: string; audienceRole: Role | null; authorId: string; isPublished: boolean; fileKey: string | null; } | { ...; })[] | ({ ...; } | { ...; })[] | { ...; }[] | { ...; }[] | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
