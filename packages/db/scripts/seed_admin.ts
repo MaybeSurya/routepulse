@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import pg from "pg";
 
 // Using the verified connection string found in packages/db/.env
-const DATABASE_URL = "postgresql://postgres.vwegdroqpyfxifjgysrs:HVkzUPuYgPGlJHyC@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres";
+const DATABASE_URL = "postgresql://user:password@localhost:5432/routepulse?schema=public";
 
 async function main() {
   const pool = new pg.Pool({ connectionString: DATABASE_URL });
